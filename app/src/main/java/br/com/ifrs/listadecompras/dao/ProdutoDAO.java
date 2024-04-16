@@ -1,6 +1,7 @@
 package br.com.ifrs.listadecompras.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -22,4 +23,7 @@ public interface ProdutoDAO {
 
     @Update
     void edita(Produto produto);
+
+    @Delete
+    void remove(Produto produto);
 }

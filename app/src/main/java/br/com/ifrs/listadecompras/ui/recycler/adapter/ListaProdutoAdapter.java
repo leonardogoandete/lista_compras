@@ -56,7 +56,9 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         btnExcluir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
                 produtos.remove(produto);
+                dao.remove(produto);
                 notifyDataSetChanged();
             }
         });
