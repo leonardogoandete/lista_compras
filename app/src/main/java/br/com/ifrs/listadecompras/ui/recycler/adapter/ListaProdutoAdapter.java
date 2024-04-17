@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ifrs.listadecompras.R;
@@ -24,15 +25,14 @@ import br.com.ifrs.listadecompras.model.Produto;
 
 public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapter.ProdutoViewHolder> {
 
-    private final List<Produto> produtos;
+    private final List<Produto> produtos = new ArrayList<>();
     private final Context context;
-
-    public ListaProdutoAdapter(List<Produto> produtos, Context context) {
-        this.produtos = produtos;
+    
+    public ListaProdutoAdapter(Context context){
         this.context = context;
     }
-
     public void adicionaProduto(Produto produto) {
+        // Add snack
         produtos.add(produto);
         notifyDataSetChanged();
     }

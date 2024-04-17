@@ -3,7 +3,6 @@ package br.com.ifrs.listadecompras.ui.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -11,19 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.List;
-
 import br.com.ifrs.listadecompras.R;
-import br.com.ifrs.listadecompras.dao.AppDatabase;
-import br.com.ifrs.listadecompras.dao.ProdutoDAO;
 import br.com.ifrs.listadecompras.model.Produto;
 import br.com.ifrs.listadecompras.ui.recycler.adapter.ListaProdutoAdapter;
 
@@ -41,14 +34,12 @@ public class ListaProdutosActivity extends AppCompatActivity {
             return insets;
         });
 
-        ProdutoDAO dao = AppDatabase.getInstance(getApplicationContext()).createProdutoDAO();
-        List<Produto> produtos = dao.todos();
         RecyclerView listaProdutosRecycleView = findViewById(R.id.listRecyclerViewListaCompras);
-
-
-        ListaProdutoAdapter adapter = new ListaProdutoAdapter(produtos, this);
+        
+        ListaProdutoAdapter adapter = new ListaProdutoAdapter(this);
         listaProdutosRecycleView.setAdapter(adapter);
         listaProdutosRecycleView.setHasFixedSize(true);
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         listaProdutosRecycleView.setLayoutManager(layoutManager);
 
@@ -77,40 +68,17 @@ public class ListaProdutosActivity extends AppCompatActivity {
                         TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.textInputAddPrecoProduto);
 
                         // Verificar se os campos estão preenchidos
-                        if (camposPreenchidos(campoNomeProduto, campoQuantidadeProduto, campoMarcaProduto, campoPrecoProduto)) {
+                        if (camposPreenchidos(campoNomeProduto, campoPrecoProduto, campoQuantidadeProduto, campoMarcaProduto)) {
                             // Extrair os valores dos campos
                             String nomeProduto = campoNomeProduto.getEditText().getText().toString();
                             int quantidadeProduto = Integer.parseInt(campoQuantidadeProduto.getEditText().getText().toString());
                             String marcaProduto = campoMarcaProduto.getEditText().getText().toString();
                             double precoProduto = Double.parseDouble(campoPrecoProduto.getEditText().getText().toString());
 
-                            // Criar um novo objeto Produto
                             Produto novoProduto = new Produto(nomeProduto, quantidadeProduto, marcaProduto, precoProduto);
-                            String txtMsg;
-                            try {
-                                // Inserir o novo produto no banco de dados
-                                dao.salva(novoProduto);
-                                txtMsg = getResources().getString(R.string.txtSnackSucessoAddProdutoMsg);
-                                //Snackbar snackbar = Snackbar.make(findViewById(R.id.main), txtMsg, Snackbar.LENGTH_SHORT);
-                                //snackbar.show();
-                            } catch (Exception e) {
-                                txtMsg = getResources().getString(R.string.txtSnackErroAddProdutoMsg);
-                                // Exibir uma mensagem de erro
-                                //Snackbar snackbar = Snackbar.make(findViewById(R.id.main), "Erro ao adicionar produto", Snackbar.LENGTH_SHORT);
-                                //snackbar.show();
-                                return;
-                            }
 
-                            Snackbar snackbar = Snackbar.make(findViewById(R.id.main), txtMsg, Snackbar.LENGTH_SHORT);
-                            snackbar.show();
-
-                            // Fechar o diálogo
-                            dialog.dismiss();
-
-                            // Atualizar a lista de produtos na RecyclerView (se necessário)
                             adapter.adicionaProduto(novoProduto);
-
-
+                            dialog.dismiss();
                         }
                     }
                 });
