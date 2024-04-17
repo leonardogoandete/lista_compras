@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
@@ -59,6 +60,8 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
                 ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
                 produtos.remove(produto);
                 dao.remove(produto);
+                Snackbar snackbar = Snackbar.make(v, "Produto excluido com sucesso", Snackbar.LENGTH_SHORT);
+                snackbar.show();
                 notifyDataSetChanged();
             }
         });
@@ -68,7 +71,8 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
             @Override
             public void onClick(View v) {
                 // Abrir um diálogo de edição aqui
-                abrirDialogoEdicao(produto);
+                Snackbar snackbarEdit = Snackbar.make(v, "Produto editado com sucesso", Snackbar.LENGTH_SHORT);
+                abrirDialogoEdicao(produto, snackbarEdit);
             }
         });
 
@@ -96,7 +100,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
 
     }
 
-    private void abrirDialogoEdicao(Produto produto) {
+    private void abrirDialogoEdicao(Produto produto, Snackbar snackbarEdit) {
         //cria o dialogo conforme o layout
         View dialogView = LayoutInflater.from(context).inflate(R.layout.activity_editar_produto_dialog, null);
 
@@ -137,6 +141,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
                 ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
                 dao.edita(produto);
 
+                snackbarEdit.show();
 
                 notifyDataSetChanged();
 

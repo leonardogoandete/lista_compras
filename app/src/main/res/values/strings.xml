@@ -14,4 +14,8 @@
     <string name="textViewValorProduto">Valor: R$</string>
     <string name="btnTextExcluirProduto">Excluir</string>
     <string name="txtListarProdutosTitulo">Lista de Compras</string>
+    <string name="txtSnackSucessoAddProdutoMsg">Produto adicionado com sucesso</string>
+    <string name="txtSnackErroAddProdutoMsg">Erro ao adicionar produto</string>
+    <string name="txtSnackSucessoEditProdutoMsg">Produto atualizado com sucesso</string>
+    <string name="txtSnackErroEditProdutoMsg">Erro ao atualizar produto</string>
 </resources>

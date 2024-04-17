@@ -86,9 +86,23 @@ public class ListaProdutosActivity extends AppCompatActivity {
 
                             // Criar um novo objeto Produto
                             Produto novoProduto = new Produto(nomeProduto, quantidadeProduto, marcaProduto, precoProduto);
+                            String txtMsg;
+                            try {
+                                // Inserir o novo produto no banco de dados
+                                dao.salva(novoProduto);
+                                txtMsg = getResources().getString(R.string.txtSnackSucessoAddProdutoMsg);
+                                //Snackbar snackbar = Snackbar.make(findViewById(R.id.main), txtMsg, Snackbar.LENGTH_SHORT);
+                                //snackbar.show();
+                            } catch (Exception e) {
+                                txtMsg = getResources().getString(R.string.txtSnackErroAddProdutoMsg);
+                                // Exibir uma mensagem de erro
+                                //Snackbar snackbar = Snackbar.make(findViewById(R.id.main), "Erro ao adicionar produto", Snackbar.LENGTH_SHORT);
+                                //snackbar.show();
+                                return;
+                            }
 
-                            // Adicionar o novo produto à lista
-                            dao.salva(novoProduto);
+                            Snackbar snackbar = Snackbar.make(findViewById(R.id.main), txtMsg, Snackbar.LENGTH_SHORT);
+                            snackbar.show();
 
                             // Fechar o diálogo
                             dialog.dismiss();
