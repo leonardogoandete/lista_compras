@@ -45,6 +45,7 @@ public class ListaProdutosActivity extends AppCompatActivity {
         List<Produto> produtos = dao.todos();
         RecyclerView listaProdutosRecycleView = findViewById(R.id.listRecyclerViewListaCompras);
 
+
         ListaProdutoAdapter adapter = new ListaProdutoAdapter(produtos, this);
         listaProdutosRecycleView.setAdapter(adapter);
         listaProdutosRecycleView.setHasFixedSize(true);
