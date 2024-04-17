@@ -15,4 +15,10 @@
     <string name="textViewValorProduto">Price: R$</string>
     <string name="btnTextExcluirProduto">Remove</string>
     <string name="txtListarProdutosTitulo">Shopping List</string>
+    <string name="txtSnackSucessoAddProdutoMsg">Product added successfully</string>
+    <string name="txtSnackErroAddProdutoMsg">Error adding product</string>
+    <string name="txtSnackSucessoEditProdutoMsg">Product updated successfully</string>
+    <string name="txtSnackErroEditProdutoMsg">Error updating product</string>
+    <string name="txtSnackSucessoDelProdutoMsg">Product successfully removed</string>
+    <string name="txtSnackErroDelProdutoMsg">Error deleting product</string>
 </resources>
