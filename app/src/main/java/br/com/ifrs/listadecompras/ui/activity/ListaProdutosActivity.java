@@ -49,7 +49,6 @@ public class ListaProdutosActivity extends AppCompatActivity {
         ListaProdutoAdapter adapter = new ListaProdutoAdapter(produtos, this);
         listaProdutosRecycleView.setAdapter(adapter);
         listaProdutosRecycleView.setHasFixedSize(true);
-        listaProdutosRecycleView.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         listaProdutosRecycleView.setLayoutManager(layoutManager);
 
