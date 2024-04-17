@@ -13,10 +13,10 @@
         android:theme="@style/Theme.ListaDeCompras"
         tools:targetApi="31">
         <activity
-            android:name=".ui.dialog.AdicionaProdutoDialog"
+            android:name=".ui.dialog.AdicionaProdutoDialogActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.dialog.EditarProdutoDialog"
+            android:name=".ui.dialog.EditarProdutoDialogActivity"
             android:exported="false" />
         <activity
             android:name=".ui.recycler.adapter.ListaProdutoAdapter"

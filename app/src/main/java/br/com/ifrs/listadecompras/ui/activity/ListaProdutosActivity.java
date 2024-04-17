@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
@@ -52,8 +53,8 @@ public class ListaProdutosActivity extends AppCompatActivity {
         listaProdutosRecycleView.setLayoutManager(layoutManager);
 
         // botao flutuante
-        FloatingActionButton botaoAdicionaProduto = findViewById(R.id.fabAddProduto);
-        botaoAdicionaProduto.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabAdicionaProduto = findViewById(R.id.fabAddProduto);
+        fabAdicionaProduto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Inflar o layout do diálogo
@@ -70,10 +71,10 @@ public class ListaProdutosActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // Obter referências para os campos de entrada de texto
-                        TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.formulario_add_produto_nome);
-                        TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.formulario_add_produto_quantidade);
-                        TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.formulario_add_produto_marca);
-                        TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.formulario_add_produto_preco);
+                        TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputAddNomeProduto);
+                        TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputAddQtdeProduto);
+                        TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.textInputAddMarcaProduto);
+                        TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.textInputAddPrecoProduto);
 
                         // Verificar se os campos estão preenchidos
                         if (camposPreenchidos(campoNomeProduto, campoQuantidadeProduto, campoMarcaProduto, campoPrecoProduto)) {
@@ -95,12 +96,13 @@ public class ListaProdutosActivity extends AppCompatActivity {
                             // Atualizar a lista de produtos na RecyclerView (se necessário)
                             adapter.adicionaProduto(novoProduto);
 
+
                         }
                     }
                 });
 
                 // Configurar o botão de cancelar
-                Button btnCancelar = dialogView.findViewById(R.id.btnCancelar);
+                Button btnCancelar = dialogView.findViewById(R.id.btnCancelarAdicaoProduto);
                 btnCancelar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

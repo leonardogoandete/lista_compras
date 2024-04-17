@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Shopping List</string>
+    <string name="btnCancelarText">Cancel</string>
+    <string name="btnTextEditarProduto">Edit</string>
+    <string name="txtEditarProdutoTitulo">Edit Product</string>
+    <string name="txtNomeProduto">Name</string>
+    <string name="txtPecoProduto">Price</string>
+    <string name="txtQtdeProduto">Amount</string>
+    <string name="txtMarcaProduto">Brand</string>
+    <string name="txtAdicionarProdutoTitulo">Add Product</string>
+    <string name="btnTextAdicionarProduto">Add</string>
+    <string name="textViewQtdeProduto">Amount:</string>
+    <string name="textViewMarcaProduto">Brand:</string>
+    <string name="textViewValorProduto">Price: R$</string>
+    <string name="btnTextExcluirProduto">Remove</string>
+    <string name="txtListarProdutosTitulo">Shopping List</string>
+</resources>

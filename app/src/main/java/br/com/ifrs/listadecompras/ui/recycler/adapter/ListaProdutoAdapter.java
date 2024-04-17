@@ -101,10 +101,10 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         View dialogView = LayoutInflater.from(context).inflate(R.layout.activity_editar_produto_dialog, null);
 
         // atribui os campos de texto do layout a variáveis
-        TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.formulario_edit_produto_nome);
-        TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.formulario_edit_produto_quantidade);
-        TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.formulario_edit_produto_marca);
-        TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.formulario_edit_produto_preco);
+        TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputEditarNomeProduto);
+        TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputEditarQtdeProduto);
+        TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.textInputEditarMarcaProduto);
+        TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.textInputEditarPrecoProduto);
 
         campoNomeProduto.getEditText().setText(produto.getNome());
         campoQuantidadeProduto.getEditText().setText(String.valueOf(produto.getQuantidade()));
@@ -117,7 +117,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         AlertDialog dialog = builder.create();
 
         // Configurar o botão de salvar no diálogo
-        Button btnEditar = dialogView.findViewById(R.id.btnEditar);
+        Button btnEditar = dialogView.findViewById(R.id.btnEditarProduto);
         btnEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +145,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
             }
         });
 
-        Button btnCancelar = dialogView.findViewById(R.id.btnEditCancelar);
+        Button btnCancelar = dialogView.findViewById(R.id.btnCancelarEdicaoProduto);
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -10,7 +10,7 @@
         android:id="@+id/textViewTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Editar Produto"
+        android:text="@string/txtEditarProdutoTitulo"
         android:textColor="@color/primaryDark"
         android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,11 +19,11 @@
         android:layout_marginBottom="16dp" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/formulario_edit_produto_nome"
+        android:id="@+id/textInputEditarNomeProduto"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nome"
+        android:hint="@string/txtNomeProduto"
         android:padding="8dp"
         android:layout_marginTop="8dp"
         app:boxBackgroundMode="outline"
@@ -40,15 +40,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/formulario_edit_produto_preco"
+        android:id="@+id/textInputEditarPrecoProduto"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:hint="Preço"
+        android:hint="@string/txtPecoProduto"
         app:boxBackgroundMode="outline"
         app:boxStrokeWidth="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/formulario_edit_produto_nome"
+        app:layout_constraintTop_toBottomOf="@+id/textInputEditarNomeProduto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -60,15 +60,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/formulario_edit_produto_quantidade"
+        android:id="@+id/textInputEditarQtdeProduto"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:hint="Quantidade"
+        android:hint="@string/txtQtdeProduto"
         app:boxBackgroundMode="outline"
         app:boxStrokeWidth="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/formulario_edit_produto_preco"
+        app:layout_constraintTop_toBottomOf="@+id/textInputEditarPrecoProduto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -80,15 +80,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/formulario_edit_produto_marca"
+        android:id="@+id/textInputEditarMarcaProduto"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:hint="Marca"
+        android:hint="@string/txtMarcaProduto"
         app:boxBackgroundMode="outline"
         app:boxStrokeWidth="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/formulario_edit_produto_quantidade"
+        app:layout_constraintTop_toBottomOf="@+id/textInputEditarQtdeProduto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -106,24 +106,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end"
-        app:layout_constraintTop_toBottomOf="@+id/formulario_edit_produto_marca"
+        app:layout_constraintTop_toBottomOf="@+id/textInputEditarMarcaProduto"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp">
 
         <Button
-            android:id="@+id/btnEditCancelar"
+            android:id="@+id/btnCancelarEdicaoProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancelar"
+            android:text="@string/btnCancelarText"
             android:backgroundTint="@color/primary"
             android:textColor="@android:color/white"
             android:layout_marginEnd="8dp"/>
 
         <Button
-            android:id="@+id/btnEditar"
+            android:id="@+id/btnEditarProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Editar"
+            android:text="@string/btnTextEditarProduto"
             android:backgroundTint="@color/secondary"
             android:textColor="@android:color/white"/>
 
