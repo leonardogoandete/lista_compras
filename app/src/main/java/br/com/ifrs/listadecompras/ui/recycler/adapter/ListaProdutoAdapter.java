@@ -26,6 +26,7 @@ import br.com.ifrs.listadecompras.model.Produto;
 public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapter.ProdutoViewHolder> {
 
     private final List<Produto> produtos;
+
     Context context;
 
     public ListaProdutoAdapter(List<Produto> produtos, Context context) {
@@ -58,10 +59,15 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
             @Override
             public void onClick(View v) {
                 ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
-                produtos.remove(produto);
-                dao.remove(produto);
-                Snackbar snackbar = Snackbar.make(v, "Produto excluido com sucesso", Snackbar.LENGTH_SHORT);
-                snackbar.show();
+                try {
+                    produtos.remove(produto);
+                    dao.remove(produto);
+                    Snackbar snackbar = Snackbar.make(v, context.getResources().getText(R.string.txtSnackSucessoDelProdutoMsg), Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }catch (Exception e){
+                    Snackbar snackbar = Snackbar.make(v, context.getResources().getText(R.string.txtSnackErroDelProdutoMsg), Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
                 notifyDataSetChanged();
             }
         });
@@ -70,13 +76,12 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         btnEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Abrir um diálogo de edição aqui
-                Snackbar snackbarEdit = Snackbar.make(v, "Produto editado com sucesso", Snackbar.LENGTH_SHORT);
-                abrirDialogoEdicao(produto, snackbarEdit);
+                Snackbar snackbar = Snackbar.make(v, context.getResources().getText(R.string.txtSnackSucessoEditProdutoMsg), Snackbar.LENGTH_SHORT);
+                String txtMsgErro = context.getResources().getString(R.string.txtSnackErroEditProdutoMsg);
+                String txtMsgSucesso = context.getResources().getString(R.string.txtSnackSucessoEditProdutoMsg);
+                abrirDialogoEdicao(produto, snackbar, txtMsgErro, txtMsgSucesso);
             }
         });
-
-
     }
 
     @Override
@@ -100,11 +105,11 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
 
     }
 
-    private void abrirDialogoEdicao(Produto produto, Snackbar snackbarEdit) {
-        //cria o dialogo conforme o layout
+    private void abrirDialogoEdicao(Produto produto, Snackbar snackbar, String txtMsgErro, String txtMsgSucesso) {
+        // Cria o dialogo conforme o layout
         View dialogView = LayoutInflater.from(context).inflate(R.layout.activity_editar_produto_dialog, null);
 
-        // atribui os campos de texto do layout a variáveis
+        // Atribui os campos de texto do layout a variáveis
         TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputEditarNomeProduto);
         TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputEditarQtdeProduto);
         TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.textInputEditarMarcaProduto);
@@ -115,41 +120,49 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         campoMarcaProduto.getEditText().setText(produto.getMarca());
         campoPrecoProduto.getEditText().setText(String.valueOf(produto.getValor()));
 
-        // Criar o AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+        // Cria o AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
 
-        // Configurar o botão de salvar no diálogo
+        // Configura o botão de salvar no diálogo
         Button btnEditar = dialogView.findViewById(R.id.btnEditarProduto);
         btnEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Obter os novos valores dos campos de texto
+                // Obtém os novos valores dos campos de texto
                 String novoNomeProduto = campoNomeProduto.getEditText().getText().toString();
                 int novaQuantidadeProduto = Integer.parseInt(campoQuantidadeProduto.getEditText().getText().toString());
                 String novaMarcaProduto = campoMarcaProduto.getEditText().getText().toString();
                 double novoPrecoProduto = Double.parseDouble(campoPrecoProduto.getEditText().getText().toString());
 
-
-                // Atualizar o objeto Produto correspondente na lista de produtos
+                // Atualiza o objeto Produto correspondente na lista de produtos
                 produto.setNome(novoNomeProduto);
                 produto.setQuantidade(novaQuantidadeProduto);
                 produto.setMarca(novaMarcaProduto);
                 produto.setValor(novoPrecoProduto);
 
                 ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
-                dao.edita(produto);
+                // Edita o produto no banco de dados
+                try {
+                    dao.edita(produto);
+                    snackbar.setText(txtMsgSucesso);
+                    snackbar.show();
+                    notifyDataSetChanged();
+                } catch (Exception e) {
+                    snackbar.setText(txtMsgErro);
+                    snackbar.show();
+                }
 
-                snackbarEdit.show();
-
+                // Notifica o adapter que os dados foram alterados
                 notifyDataSetChanged();
 
-                // Fechar o diálogo
+                // Fecha o diálogo de edição
                 dialog.dismiss();
             }
         });
 
+        // Configura o botão de cancelar no diálogo
         Button btnCancelar = dialogView.findViewById(R.id.btnCancelarEdicaoProduto);
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +171,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
             }
         });
 
+        // Mostra o diálogo de edição
         dialog.show();
     }
 }

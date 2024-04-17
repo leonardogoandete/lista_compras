@@ -18,4 +18,6 @@
     <string name="txtSnackErroAddProdutoMsg">Erro ao adicionar produto</string>
     <string name="txtSnackSucessoEditProdutoMsg">Produto atualizado com sucesso</string>
     <string name="txtSnackErroEditProdutoMsg">Erro ao atualizar produto</string>
+    <string name="txtSnackSucessoDelProdutoMsg">Produto removido com sucesso</string>
+    <string name="txtSnackErroDelProdutoMsg">Erro ao excluir produto</string>
 </resources>
