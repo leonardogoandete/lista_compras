@@ -3,4 +3,6 @@
     <color name="primary">#9468AC</color>
     <color name="primaryDark">#4E2F5F</color>
     <color name="secondary">#FECE6B</color>
+    <color name="secondaryDark">#F9A825</color>
+    <color name="tertiary">#CD595B</color>
 </resources>

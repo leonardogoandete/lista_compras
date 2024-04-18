@@ -14,15 +14,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.ifrs.listadecompras.R;
 import br.com.ifrs.listadecompras.model.Produto;
 import br.com.ifrs.listadecompras.ui.recycler.adapter.ListaProdutoAdapter;
+import br.com.ifrs.listadecompras.utils.ValidaFormularioProduto;
 
 public class ListaProdutosActivity extends AppCompatActivity {
 
-
+    RecyclerView listaProdutosRecycleView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +36,9 @@ public class ListaProdutosActivity extends AppCompatActivity {
             return insets;
         });
 
-        RecyclerView listaProdutosRecycleView = findViewById(R.id.listRecyclerViewListaCompras);
+        listaProdutosRecycleView = findViewById(R.id.listRecyclerViewListaCompras);
         
-        ListaProdutoAdapter adapter = new ListaProdutoAdapter(this);
+        ListaProdutoAdapter adapter = new ListaProdutoAdapter(this,Produto.inicializaListaProdutos());
         listaProdutosRecycleView.setAdapter(adapter);
         listaProdutosRecycleView.setHasFixedSize(true);
 
@@ -48,8 +50,8 @@ public class ListaProdutosActivity extends AppCompatActivity {
         fabAdicionaProduto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Inflar o layout do diálogo
                 View dialogView = getLayoutInflater().inflate(R.layout.activity_adiciona_produto_dialog, null);
+                Snackbar snackbar = Snackbar.make(v, R.string.txtSnackSucessoAddProdutoMsg, Snackbar.LENGTH_SHORT);
 
                 // Criar o AlertDialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListaProdutosActivity.this);
@@ -58,55 +60,41 @@ public class ListaProdutosActivity extends AppCompatActivity {
 
                 // Configurar o botão de adicionar
                 Button btnAdicionar = dialogView.findViewById(R.id.btnAdicionar);
+                configuraAcaoClickBtnAdicionar(btnAdicionar, dialogView, snackbar, dialog);
+
+                // Configurar o botão de cancelar
+                Button btnCancelar = dialogView.findViewById(R.id.btnCancelarAdicaoProduto);
+                btnCancelar.setOnClickListener(viewBtnCancelar -> dialog.dismiss());
+                dialog.show();
+            }
+
+            private void configuraAcaoClickBtnAdicionar(Button btnAdicionar, View dialogView, Snackbar snackbar, AlertDialog dialog) {
                 btnAdicionar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ValidaFormularioProduto validador = new ValidaFormularioProduto();
+
                         // Obter referências para os campos de entrada de texto
                         TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputAddNomeProduto);
                         TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputAddQtdeProduto);
                         TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.textInputAddMarcaProduto);
                         TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.textInputAddPrecoProduto);
-
                         // Verificar se os campos estão preenchidos
-                        if (camposPreenchidos(campoNomeProduto, campoPrecoProduto, campoQuantidadeProduto, campoMarcaProduto)) {
+
+                        if (validador.camposPreenchidos(campoNomeProduto, campoPrecoProduto, campoQuantidadeProduto, campoMarcaProduto)) {
                             // Extrair os valores dos campos
                             String nomeProduto = campoNomeProduto.getEditText().getText().toString();
                             int quantidadeProduto = Integer.parseInt(campoQuantidadeProduto.getEditText().getText().toString());
                             String marcaProduto = campoMarcaProduto.getEditText().getText().toString();
                             double precoProduto = Double.parseDouble(campoPrecoProduto.getEditText().getText().toString());
 
-                            Produto novoProduto = new Produto(nomeProduto, quantidadeProduto, marcaProduto, precoProduto);
-
-                            adapter.adicionaProduto(novoProduto);
+                            adapter.adicionaProduto(new Produto(nomeProduto, quantidadeProduto, marcaProduto, precoProduto));
+                            snackbar.show();
                             dialog.dismiss();
                         }
                     }
                 });
-
-                // Configurar o botão de cancelar
-                Button btnCancelar = dialogView.findViewById(R.id.btnCancelarAdicaoProduto);
-                btnCancelar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
             }
         });
-    }
-
-    // Método auxiliar para verificar se os campos de entrada de texto estão preenchidos
-    private boolean camposPreenchidos(TextInputLayout... campos) {
-        for (TextInputLayout campo : campos) {
-            String textoCampo = campo.getEditText().getText().toString().trim();
-            if (textoCampo.isEmpty()) {
-                campo.setError("Campo obrigatório");
-                return false;
-            } else {
-                campo.setError(null);
-            }
-        }
-        return true;
     }
 }

@@ -19,31 +19,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ifrs.listadecompras.R;
-import br.com.ifrs.listadecompras.dao.AppDatabase;
-import br.com.ifrs.listadecompras.dao.ProdutoDAO;
 import br.com.ifrs.listadecompras.model.Produto;
 
 public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapter.ProdutoViewHolder> {
+    private Context context;
+    List<Produto> produtos = new ArrayList<>();
 
-    private final List<Produto> produtos = new ArrayList<>();
-    private final Context context;
-
-    private final ProdutoDAO dao;
-    public ListaProdutoAdapter(Context context){
+    public ListaProdutoAdapter(Context context, List<Produto> produtos) {
+        this.produtos = produtos;
         this.context = context;
-        dao = AppDatabase.getInstance(context).createProdutoDAO();
-    }
-    public void adicionaProduto(Produto produto) {
-        produtos.add(produto);
-        dao.salva(produto);
-        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public ListaProdutoAdapter.ProdutoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View viewLinhasProdutos = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_produto, parent, false);
-        return new ProdutoViewHolder(viewLinhasProdutos);
+    public ListaProdutoAdapter.ProdutoViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+        View itemList = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.card_item_produto, viewGroup, false);
+        return new ProdutoViewHolder(itemList);
     }
 
     @Override
@@ -54,29 +46,6 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         produtoViewHolder.quantidadeProduto.setText(String.valueOf(produto.getQuantidade()));
         produtoViewHolder.marcaProduto.setText(produto.getMarca());
 
-        ImageButton btnExcluir = produtoViewHolder.itemView.findViewById(R.id.imgBtnExcluir);
-        btnExcluir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    produtos.remove(produto);
-                    dao.remove(produto);
-                    Snackbar.make(v, R.string.txtSnackSucessoDelProdutoMsg, Snackbar.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Snackbar.make(v, R.string.txtSnackErroDelProdutoMsg, Snackbar.LENGTH_SHORT).show();
-                }
-                notifyDataSetChanged();
-            }
-        });
-
-        ImageButton btnEditar = produtoViewHolder.itemView.findViewById(R.id.imgBtnEditar);
-        btnEditar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar snackbar = Snackbar.make(v, "", Snackbar.LENGTH_SHORT);
-                abrirDialogoEdicao(produto, snackbar);
-            }
-        });
     }
 
     @Override
@@ -85,6 +54,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
     }
 
     public class ProdutoViewHolder extends RecyclerView.ViewHolder {
+
         TextView nomeProduto;
         TextView precoProduto;
         TextView quantidadeProduto;
@@ -96,63 +66,65 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
             precoProduto = itemView.findViewById(R.id.textViewValorPreco);
             quantidadeProduto = itemView.findViewById(R.id.textViewValorQuantidade);
             marcaProduto = itemView.findViewById(R.id.textViewValorMarca);
+
+            ImageButton btnEditar = itemView.findViewById(R.id.imgBtnEditar);
+            btnEditar.setOnClickListener(viewBtnEditar -> {
+                Produto produto = produtos.get(getAdapterPosition());
+                abrirDialogoEdicao(produto, viewBtnEditar);
+            });
+
+
+            ImageButton btnExcluir = itemView.findViewById(R.id.imgBtnExcluir);
+            btnExcluir.setOnClickListener(viewBtnExcluir -> {
+                Produto produto = produtos.get(getAdapterPosition());
+                produtos.remove(produto);
+                // notifica o elemento que foi removido para os ouvintes
+                notifyItemRemoved(getAdapterPosition());
+                Snackbar.make(viewBtnExcluir, R.string.txtSnackSucessoDelProdutoMsg, Snackbar.LENGTH_SHORT).show();
+            });
+        }
+
+        private void abrirDialogoEdicao(Produto produto, View viewBtnEditar) {
+            View dialogView = LayoutInflater.from(context).inflate(R.layout.activity_editar_produto_dialog, null);
+            TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputEditarNomeProduto);
+            TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputEditarQtdeProduto);
+            TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.textInputEditarMarcaProduto);
+            TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.textInputEditarPrecoProduto);
+
+            campoNomeProduto.getEditText().setText(produto.getNome());
+            campoQuantidadeProduto.getEditText().setText(String.valueOf(produto.getQuantidade()));
+            campoMarcaProduto.getEditText().setText(produto.getMarca());
+            campoPrecoProduto.getEditText().setText(String.valueOf(produto.getValor()));
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(dialogView);
+            AlertDialog dialog = builder.create();
+
+            Button btnEditar = dialogView.findViewById(R.id.btnEditarProduto);
+            btnEditar.setOnClickListener(viewBtnEditarConfirma -> {
+                String novoNome = campoNomeProduto.getEditText().getText().toString();
+                int novaQuantidade = Integer.parseInt(campoQuantidadeProduto.getEditText().getText().toString());
+                String novaMarca = campoMarcaProduto.getEditText().getText().toString();
+                double novoPreco = Double.parseDouble(campoPrecoProduto.getEditText().getText().toString());
+
+                Produto produtoEditado = new Produto(novoNome, novaQuantidade, novaMarca, novoPreco);
+                produtos.set(getAdapterPosition(), produtoEditado);
+                Snackbar.make(viewBtnEditar, R.string.txtSnackSucessoEditProdutoMsg, Snackbar.LENGTH_SHORT).show();
+                // notifica o elemento que foi alterado para os ouvintes
+                notifyItemChanged(getAdapterPosition());
+
+                dialog.dismiss();
+            });
+
+            Button btnCancelar = dialogView.findViewById(R.id.btnCancelarEdicaoProduto);
+            btnCancelar.setOnClickListener(viewBtnEditarCancela -> dialog.dismiss());
+            dialog.show();
         }
     }
 
-    private void abrirDialogoEdicao(Produto produto, Snackbar snackbar) {
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.activity_editar_produto_dialog, null);
-
-        TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputEditarNomeProduto);
-        TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputEditarQtdeProduto);
-        TextInputLayout campoMarcaProduto = dialogView.findViewById(R.id.textInputEditarMarcaProduto);
-        TextInputLayout campoPrecoProduto = dialogView.findViewById(R.id.textInputEditarPrecoProduto);
-
-        campoNomeProduto.getEditText().setText(produto.getNome());
-        campoQuantidadeProduto.getEditText().setText(String.valueOf(produto.getQuantidade()));
-        campoMarcaProduto.getEditText().setText(produto.getMarca());
-        campoPrecoProduto.getEditText().setText(String.valueOf(produto.getValor()));
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(dialogView);
-        AlertDialog dialog = builder.create();
-
-        Button btnEditar = dialogView.findViewById(R.id.btnEditarProduto);
-        btnEditar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String novoNomeProduto = campoNomeProduto.getEditText().getText().toString();
-                int novaQuantidadeProduto = Integer.parseInt(campoQuantidadeProduto.getEditText().getText().toString());
-                String novaMarcaProduto = campoMarcaProduto.getEditText().getText().toString();
-                double novoPrecoProduto = Double.parseDouble(campoPrecoProduto.getEditText().getText().toString());
-
-                produto.setNome(novoNomeProduto);
-                produto.setQuantidade(novaQuantidadeProduto);
-                produto.setMarca(novaMarcaProduto);
-                produto.setValor(novoPrecoProduto);
-
-                ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
-                try {
-                    dao.edita(produto);
-                    snackbar.setText(R.string.txtSnackSucessoEditProdutoMsg);
-                    snackbar.show();
-                } catch (Exception e) {
-                    snackbar.setText(R.string.txtSnackErroEditProdutoMsg);
-                    snackbar.show();
-                }
-
-                notifyDataSetChanged();
-                dialog.dismiss();
-            }
-        });
-
-        Button btnCancelar = dialogView.findViewById(R.id.btnCancelarEdicaoProduto);
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
+    public void adicionaProduto(Produto produto) {
+        produtos.add(produto);
+        // notifica que foi inserido um produto para os ouvintes
+        notifyItemInserted(produtos.size() - 1);
     }
 }
