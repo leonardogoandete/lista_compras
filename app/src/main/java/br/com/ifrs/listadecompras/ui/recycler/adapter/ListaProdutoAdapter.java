@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ifrs.listadecompras.R;
+import br.com.ifrs.listadecompras.dao.AppDatabase;
+import br.com.ifrs.listadecompras.dao.ProdutoDAO;
 import br.com.ifrs.listadecompras.model.Produto;
 
 public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapter.ProdutoViewHolder> {
@@ -29,6 +31,8 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         this.produtos = produtos;
         this.context = context;
     }
+
+    ProdutoDAO produtoDAO = AppDatabase.getInstance(context).createProdutoDAO();
 
     @NonNull
     @Override
@@ -69,15 +73,17 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
 
             ImageButton btnEditar = itemView.findViewById(R.id.imgBtnEditar);
             btnEditar.setOnClickListener(viewBtnEditar -> {
-                Produto produto = produtos.get(getAdapterPosition());
-                abrirDialogoEdicao(produto, viewBtnEditar);
+                Produto p = produtoDAO.getProdutoById(produtos.get(getAdapterPosition()).getId());
+                abrirDialogoEdicao(p, viewBtnEditar);
             });
 
 
             ImageButton btnExcluir = itemView.findViewById(R.id.imgBtnExcluir);
             btnExcluir.setOnClickListener(viewBtnExcluir -> {
                 try {
+                    Produto produto = produtos.get(getAdapterPosition());
                     produtos.remove(getAdapterPosition());
+                    produtoDAO.delete(produto);
                     notifyItemRemoved(getAdapterPosition());
                     Snackbar.make(viewBtnExcluir, R.string.txtSnackSucessoDelProdutoMsg, Snackbar.LENGTH_SHORT).show();
                 } catch (Exception e) {
@@ -104,7 +110,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
 
             Button btnEditar = dialogView.findViewById(R.id.btnEditarProduto);
             btnEditar.setOnClickListener(viewBtnEditarConfirma -> {
-                try{
+                try {
                     String novoNome = campoNomeProduto.getEditText().getText().toString();
                     int novaQuantidade = Integer.parseInt(campoQuantidadeProduto.getEditText().getText().toString());
                     String novaMarca = campoMarcaProduto.getEditText().getText().toString();
@@ -116,14 +122,21 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
                         return;
                     }
 
-                    Produto produtoEditado = new Produto(novoNome, novaQuantidade, novaMarca, novoPreco);
-                    produtos.set(getAdapterPosition(), produtoEditado);
-                    Snackbar.make(viewBtnEditar, R.string.txtSnackSucessoEditProdutoMsg, Snackbar.LENGTH_SHORT).show();
-                    // notifica o elemento que foi alterado para os ouvintes
-                    notifyItemChanged(getAdapterPosition());
+                    produto.setNome(novoNome);
+                    produto.setQuantidade(novaQuantidade);
+                    produto.setMarca(novaMarca);
+                    produto.setValor(novoPreco);
 
+
+                    produtoDAO.update(produto);
+                    produtos.set(getAdapterPosition(), produto);
+
+                    Snackbar.make(viewBtnEditar, R.string.txtSnackSucessoEditProdutoMsg, Snackbar.LENGTH_SHORT).show();
+                    // Notificar o adaptador da alteração na posição correta
+                    notifyItemChanged(getAdapterPosition());
                     dialog.dismiss();
-                }catch (Exception e){
+
+                } catch (Exception e) {
                     dialog.dismiss();
                     Snackbar.make(viewBtnEditar, R.string.txtSnackErroEditProdutoMsg, Snackbar.LENGTH_SHORT).show();
                 }
@@ -133,10 +146,12 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
             btnCancelar.setOnClickListener(viewBtnEditarCancela -> dialog.dismiss());
             dialog.show();
         }
+
     }
 
     public void adicionaProduto(Produto produto) {
         produtos.add(produto);
+        produtoDAO.insert(produto);
         // notifica que foi inserido um produto para os ouvintes
         notifyItemInserted(produtos.size() - 1);
     }
