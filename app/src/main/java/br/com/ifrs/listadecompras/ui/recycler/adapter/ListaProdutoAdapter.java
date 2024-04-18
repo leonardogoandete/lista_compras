@@ -27,13 +27,15 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
 
     private final List<Produto> produtos = new ArrayList<>();
     private final Context context;
-    
+
+    private final ProdutoDAO dao;
     public ListaProdutoAdapter(Context context){
         this.context = context;
+        dao = AppDatabase.getInstance(context).createProdutoDAO();
     }
     public void adicionaProduto(Produto produto) {
-        // Add snack
         produtos.add(produto);
+        dao.salva(produto);
         notifyDataSetChanged();
     }
 
@@ -56,7 +58,6 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         btnExcluir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProdutoDAO dao = AppDatabase.getInstance(context).createProdutoDAO();
                 try {
                     produtos.remove(produto);
                     dao.remove(produto);
