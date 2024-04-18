@@ -1,6 +1,7 @@
 package br.com.ifrs.listadecompras.ui.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -23,7 +24,7 @@ import br.com.ifrs.listadecompras.ui.recycler.adapter.ListaProdutoAdapter;
 import br.com.ifrs.listadecompras.utils.ValidaFormularioProduto;
 
 public class ListaProdutosActivity extends AppCompatActivity {
-
+    private final static ValidaFormularioProduto validador = new ValidaFormularioProduto();
     RecyclerView listaProdutosRecycleView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +51,27 @@ public class ListaProdutosActivity extends AppCompatActivity {
         fabAdicionaProduto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View dialogView = getLayoutInflater().inflate(R.layout.activity_adiciona_produto_dialog, null);
-                Snackbar snackbar = Snackbar.make(v, R.string.txtSnackSucessoAddProdutoMsg, Snackbar.LENGTH_SHORT);
 
-                // Criar o AlertDialog
+                View dialogView = getLayoutInflater().inflate(R.layout.activity_adiciona_produto_dialog, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListaProdutosActivity.this);
                 builder.setView(dialogView);
                 AlertDialog dialog = builder.create();
 
-                // Configurar o botão de adicionar
-                Button btnAdicionar = dialogView.findViewById(R.id.btnAdicionar);
-                configuraAcaoClickBtnAdicionar(btnAdicionar, dialogView, snackbar, dialog);
+                try {
+                    // Configurar o Snackbar
+                    Snackbar snackbar = Snackbar.make(v, R.string.txtSnackErroAddProdutoMsg, Snackbar.LENGTH_SHORT);
+
+                    // Configurar o botão de adicionar
+                    Button btnAdicionar = dialogView.findViewById(R.id.btnAdicionar);
+                    configuraAcaoClickBtnAdicionar(btnAdicionar, dialogView, snackbar, dialog);
+
+                    // Configurar o botão de cancelar
+                    Button btnCancelar = dialogView.findViewById(R.id.btnCancelarAdicaoProduto);
+                    btnCancelar.setOnClickListener(viewBtnCancelar -> dialog.dismiss());
+                    dialog.show();
+                } catch (Exception e) {
+                    Log.e("ListaProdutosActivity", "Erro ao adicionar produto: " + e.getMessage());
+                }
 
                 // Configurar o botão de cancelar
                 Button btnCancelar = dialogView.findViewById(R.id.btnCancelarAdicaoProduto);
@@ -72,7 +83,7 @@ public class ListaProdutosActivity extends AppCompatActivity {
                 btnAdicionar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ValidaFormularioProduto validador = new ValidaFormularioProduto();
+
 
                         // Obter referências para os campos de entrada de texto
                         TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputAddNomeProduto);
