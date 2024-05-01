@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ifrs.listadecompras.R;
-import br.com.ifrs.listadecompras.dao.AppDatabase;
-import br.com.ifrs.listadecompras.dao.ProdutoDAO;
 import br.com.ifrs.listadecompras.model.Produto;
 
 public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapter.ProdutoViewHolder> {
@@ -31,8 +29,6 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         this.produtos = produtos;
         this.context = context;
     }
-
-    ProdutoDAO produtoDAO = AppDatabase.getInstance(context).createProdutoDAO();
 
     @NonNull
     @Override
@@ -73,7 +69,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
 
             ImageButton btnEditar = itemView.findViewById(R.id.imgBtnEditar);
             btnEditar.setOnClickListener(viewBtnEditar -> {
-                Produto p = produtoDAO.getProdutoById(produtos.get(getAdapterPosition()).getId());
+                Produto p = produtos.get(getAdapterPosition());
                 abrirDialogoEdicao(p, viewBtnEditar);
             });
 
@@ -83,7 +79,6 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
                 try {
                     Produto produto = produtos.get(getAdapterPosition());
                     produtos.remove(getAdapterPosition());
-                    produtoDAO.delete(produto);
                     notifyItemRemoved(getAdapterPosition());
                     Snackbar.make(viewBtnExcluir, R.string.txtSnackSucessoDelProdutoMsg, Snackbar.LENGTH_SHORT).show();
                 } catch (Exception e) {
@@ -93,6 +88,9 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
         }
 
         private void abrirDialogoEdicao(Produto produto, View viewBtnEditar) {
+            if (produto == null) {
+                return;
+            }
             View dialogView = LayoutInflater.from(context).inflate(R.layout.activity_editar_produto_dialog, null);
             TextInputLayout campoNomeProduto = dialogView.findViewById(R.id.textInputEditarNomeProduto);
             TextInputLayout campoQuantidadeProduto = dialogView.findViewById(R.id.textInputEditarQtdeProduto);
@@ -128,7 +126,7 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
                     produto.setValor(novoPreco);
 
 
-                    produtoDAO.update(produto);
+                    //produtoDAO.update(produto);
                     produtos.set(getAdapterPosition(), produto);
 
                     Snackbar.make(viewBtnEditar, R.string.txtSnackSucessoEditProdutoMsg, Snackbar.LENGTH_SHORT).show();
@@ -150,9 +148,11 @@ public class ListaProdutoAdapter extends RecyclerView.Adapter<ListaProdutoAdapte
     }
 
     public void adicionaProduto(Produto produto) {
+        if (produto == null) {
+            return;
+        }
         produtos.add(produto);
-        produtoDAO.insert(produto);
         // notifica que foi inserido um produto para os ouvintes
-        notifyItemInserted(produtos.size() - 1);
+        notifyItemInserted(produtos.size() + 1);
     }
 }

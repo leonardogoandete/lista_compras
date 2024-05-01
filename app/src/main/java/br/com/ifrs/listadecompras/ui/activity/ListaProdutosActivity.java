@@ -21,8 +21,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.List;
 
 import br.com.ifrs.listadecompras.R;
-import br.com.ifrs.listadecompras.dao.AppDatabase;
-import br.com.ifrs.listadecompras.dao.ProdutoDAO;
 import br.com.ifrs.listadecompras.model.Produto;
 import br.com.ifrs.listadecompras.ui.recycler.adapter.ListaProdutoAdapter;
 import br.com.ifrs.listadecompras.utils.ValidaFormularioProduto;
@@ -43,8 +41,7 @@ public class ListaProdutosActivity extends AppCompatActivity {
 
         listaProdutosRecycleView = findViewById(R.id.listRecyclerViewListaCompras);
         
-        //ListaProdutoAdapter adapter = new ListaProdutoAdapter(this,Produto.inicializaListaProdutos());
-        ListaProdutoAdapter adapter = new ListaProdutoAdapter(this,carregaProdutos());
+        ListaProdutoAdapter adapter = new ListaProdutoAdapter(this,Produto.inicializaListaProdutos());
         listaProdutosRecycleView.setAdapter(adapter);
         listaProdutosRecycleView.setHasFixedSize(true);
 
@@ -108,14 +105,12 @@ public class ListaProdutosActivity extends AppCompatActivity {
                             snackbar.show();
                             dialog.dismiss();
                         }
+                        else {
+                            Snackbar.make(v, R.string.txtSnackErroAddProdutoMsg, Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
         });
-    }
-
-    private List<Produto> carregaProdutos() {
-        ProdutoDAO dao = AppDatabase.getInstance(this).createProdutoDAO();
-        return dao.getAllProdutos();
     }
 }
